@@ -1,0 +1,189 @@
+body {
+    font: 75%/1.6 "Myriad Pro", Frutiger, "Lucida Grande", "Lucida Sans", "Lucida Sans Unicode", Verdana, sans-serif;
+}
+table {
+    border-collapse: collapse;
+    width: 75%;
+    border: 1px solid #666;
+}
+thead {
+    background: #ccc url(https://www.devfuria.com.br/html-css/tabelas/bar.gif) repeat-x left center;
+    border-top: 1px solid #a5a5a5;
+    border-bottom: 1px solid #a5a5a5;
+}
+tr:hover {
+    background-color:#3d80df;
+    color: #fff;
+}
+thead tr:hover {
+    background-color: transparent;
+    color: inherit;
+}
+tr:nth-child(even) {
+    background-color: #edf5ff;
+}
+th {
+    font-weight: normal;
+    text-align: left;
+}
+th, td {
+    padding: 0.1em 1em;
+}
+
+.row{
+    margin-left:0px;
+    margin-right:0px;
+}
+
+#wrapper {
+    padding-left: 70px;
+    transition: all .4s ease 0s;
+    height: 100%
+}
+
+#sidebar-wrapper {
+    margin-left: -150px;
+    left: 70px;
+    width: 150px;
+    background: #6495ED;
+    position: fixed;
+    height: 100%;
+    z-index: 10000;
+    transition: all .4s ease 0s;
+}
+
+.sidebar-nav {
+    display: block;
+    float: left;
+    width: 150px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+#page-content-wrapper {
+    padding-left: 0;
+    margin-left: 0;
+    width: 100%;
+    height: auto;
+}
+#wrapper.active {
+    padding-left: 150px;
+}
+#wrapper.active #sidebar-wrapper {
+    left: 150px;
+}
+
+#page-content-wrapper {
+    width: 100%;
+}
+
+#sidebar_menu li a, .sidebar-nav li a {
+    color: #00008B;
+    display: block;
+    float: left;
+    text-decoration: none;
+    width: 150px;
+    background: #6495ED;  
+    border-top: 1px solid #C0C0C0;
+    border-bottom: 1px solid #0060a3;
+    -webkit-transition: background .5s;
+    -moz-transition: background .5s;
+    -o-transition: background .5s;
+    -ms-transition: background .5s;
+    transition: background .5s;
+}
+.sidebar_name {
+    padding-top: 25px;
+    color: #00008B;
+    opacity: .7;
+}
+
+.sidebar-nav li {
+    line-height: 40px;
+    text-indent: 20px;
+}
+
+.sidebar-nav li a {
+    color: #00008B;
+    display: block;
+    text-decoration: none;
+    font-size: 20px;
+}
+
+.sidebar-nav li a:hover {
+    color: #00008B;
+    background: rgba(255,255,255,0.2);
+    text-decoration: none;
+    font-size: 20px;
+}
+
+.sidebar-nav li a:active,
+.sidebar-nav li a:focus {
+    text-decoration: none;
+}
+
+.sidebar-nav > .sidebar-brand {
+    height: 65px;
+    line-height: 60px;
+    font-size: 18px;
+}
+
+.sidebar-nav > .sidebar-brand a {
+    color: #00008B;
+}
+
+.sidebar-nav > .sidebar-brand a:hover {
+    color: #00008B;
+    background: none;
+}
+
+#main_icon
+{
+    float:right;
+    padding-right: 26px;
+    padding-top:20px;
+}
+.sub_icon
+{
+    float:right;
+    padding-right: 28px;
+    padding-top: 14px;
+    font-size: 15px;
+}
+.content-header {
+    height: 65px;
+    line-height: 65px;
+}
+
+.content-header h1 {
+    margin: 0;
+    margin-left: 20px;
+    line-height: 65px;
+    display: inline-block;
+}
+
+@media (max-width:767px) {
+    #wrapper {
+        padding-left: 70px;
+        transition: all .4s ease 0s;
+    }
+    #sidebar-wrapper {
+        left: 70px;
+    }
+    #wrapper.active {
+        padding-left: 150px;
+    }
+    #wrapper.active #sidebar-wrapper {
+        left: 150px;
+        width: 150px;
+        transition: all .4s ease 0s;
+    }
+}
+
+    i.glyphicon {
+        font-size: 3em;
+    }
+    J1 { 
+        float: rigth;
+        font-size: 14px;
+    }
