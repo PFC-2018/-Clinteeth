@@ -116,12 +116,19 @@ public class AgendaDAO {
     }
     
     public ArrayList<Agendamento> ListarTodosAgendamentos(int id) {
-        String sqlListarAgendamento = "SELECT idagendamento, iddentista, idpaciente, dtagendamento, hora, titulo, obsagendamento, situacao FROM tbl_agendamento WHERE ST='TRUE' AND iddentista = ? AND situacao ='PENDENTE' ORDER BY dtagendamento, hora;";
+        String sqlListarAgendamento;
+        if (id != 0) {
+            sqlListarAgendamento = "SELECT idagendamento, iddentista, idpaciente, dtagendamento, hora, titulo, obsagendamento, situacao FROM tbl_agendamento WHERE ST='TRUE' AND iddentista = ? AND situacao ='PENDENTE' ORDER BY dtagendamento, hora;";
+        } else {
+            sqlListarAgendamento = "SELECT idagendamento, iddentista, idpaciente, dtagendamento, hora, titulo, obsagendamento, situacao FROM tbl_agendamento WHERE ST='TRUE' AND situacao ='PENDENTE' ORDER BY dtagendamento, hora;";
+        }
         ArrayList<Agendamento> agendamentos = new ArrayList<>();
         try {
             connection = FabricaConexao.conexao();
             PreparedStatement ps = connection.prepareStatement(sqlListarAgendamento);
-            ps.setInt(1, id);
+            if (id != 0) {
+                ps.setInt(1, id);
+            }
             ResultSet rs = ps.executeQuery();//Objeto para leitura das linhas retornadas pelo Select
             while (rs.next()) {//Move para a próxima linha com dados e valida se há próxima linha
                 Agendamento agendamento = new Agendamento(rs.getInt("idagendamento"),

@@ -65,7 +65,8 @@
                                                 </tr>
                                             </thead>
 
-                                            <tbody>                                                
+                                            <tbody> 
+                                                <c:forEach items="${disponibilidadeDentistaList}" var="disponibilidadeDentista">
                                                 <tr>                                              
                                                     <td><j1> ${disponibilidadeDentista.dentista.pessoa.nome} </j1></td>
                                                     <td>
@@ -86,6 +87,7 @@
                                                         <a class="btn btn-success btn-xs" href="<%=request.getContextPath()%>/Disponibilidade?btnAcionar=ListarPorID&id=${d.disponibilidadeID}">Visualizar</a>
                                                     </td>                        
                                                 </tr>
+                                                </c:forEach>
                                             </tbody>
                                         </table>
                                     </div>

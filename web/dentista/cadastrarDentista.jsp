@@ -19,6 +19,7 @@
         <title>Cadastro de Dentista</title>		
     </head>
     <body>
+        <jsp:useBean id="DisponibilidadeController" class="clinteeth.controller.DisponibilidadeController"></jsp:useBean>
         <div id="wrapper" class="active">  
             <div id="menu"></div><br>
             <div id="page-content-wrapper">
@@ -113,7 +114,7 @@
                                                 <label class="col-xs-1 control-label"> <J1>UF</j1> </label> 
                                                 <div class="col-md-1">                    
                                                     <select name="uf" class="form-control">
-                                                        <c:forEach items="${EstadosEnum.values()}" var="uf">
+                                                        <c:forEach items="${DisponibilidadeController.estados()}" var="uf">
                                                             <option value="${uf.toString()}"> ${uf.name()} </option>
                                                         </c:forEach>
                                                     </select>

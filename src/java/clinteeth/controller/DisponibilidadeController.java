@@ -6,12 +6,14 @@ import clinteeth.model.Disponibilidade;
 import clinteeth.model.Dentista;
 import clinteeth.model.DiasDaSemanasEnum;
 import clinteeth.model.DisponibilidadeDentista;
+import clinteeth.model.EstadosEnum;
 import clinteeth.model.HorasEnum;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.servlet.ServletException;
@@ -25,7 +27,9 @@ public class DisponibilidadeController extends HttpServlet {
 
     private static DisponibilidadeDAO disponibilidadeDAO = new DisponibilidadeDAO();
     private static DentistaDAO dentistaDAO = new DentistaDAO();
-
+    public EstadosEnum[] estados() {
+        return EstadosEnum.values();
+    }
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -154,20 +158,37 @@ public class DisponibilidadeController extends HttpServlet {
 
     private void ListarDiasDisponiveisPorDentista(HttpServletRequest request, HttpServletResponse response) throws ParseException, ServletException, IOException {
         String idDentistaSelecionado = request.getParameter("dentista");
+        List<Disponibilidade> disponibilidades;
+        List<DisponibilidadeDentista> disponibilidadeDentistaList = new ArrayList<>();
         java.util.List<Dentista> dentistas = dentistaDAO.ListarTodosDentistas();
-        int id;
         if (idDentistaSelecionado == null) {
-            id = dentistas.stream().findFirst().get().getDentistaID();
+            disponibilidades = disponibilidadeDAO.ListarHorariosDisponiveis(0);
         } else {
-            id = Integer.parseInt(idDentistaSelecionado);
+            disponibilidades = disponibilidadeDAO.ListarHorariosDisponiveis(Integer.parseInt(idDentistaSelecionado));
         }
-        List<Disponibilidade> disponibilidades = disponibilidadeDAO.ListarHorariosDisponiveis(id);
-        DisponibilidadeDentista disponibilidadeDentista = new DisponibilidadeDentista();
-        disponibilidadeDentista.setDentista(dentistaDAO.listarPorId(id));
-        disponibilidadeDentista.setDiasDisponiveis(disponibilidades.stream().map(d -> d.getDtdisponivel().getDiasSemanas()).distinct().collect(Collectors.toList()));
-        disponibilidadeDentista.setHorariosDisponiveis(disponibilidades.stream().map(d -> d.getHora().getHoras()).distinct().collect(Collectors.toList()));
+        disponibilidades
+                .forEach(d -> {
+                    DisponibilidadeDentista disponibilidadeDentista = new DisponibilidadeDentista();
+                    disponibilidadeDentista.setDentista(d.getDentista());
+                    Dentista dentista = d.getDentista();
+                    disponibilidadeDentista.setDiasDisponiveis(disponibilidades
+                            .stream()
+                            .filter(dd -> dd.getDentista().getDentistaID() == dentista.getDentistaID())
+                            .map(dd -> dd.getDtdisponivel().getDiasSemanas())
+                            .distinct()
+                            .collect(Collectors.toList()));
+                    disponibilidadeDentista.setHorariosDisponiveis(disponibilidades
+                            .stream()
+                            .filter(dd -> dd.getDentista().getDentistaID() == dentista.getDentistaID())
+                            .map(dd -> dd.getHora().getHoras())
+                            .distinct()
+                            .collect(Collectors.toList()));
+                    if (!disponibilidadeDentistaList.contains(disponibilidadeDentista)) {
+                        disponibilidadeDentistaList.add(disponibilidadeDentista);
+                    }
+                });
         request.setAttribute("dentista", dentistas);
-        request.setAttribute("disponibilidadeDentista", disponibilidadeDentista);
+        request.setAttribute("disponibilidadeDentistaList", disponibilidadeDentistaList);
         request.getRequestDispatcher("dentista/listarDiasDisponiveis.jsp").forward(request, response);
     }
 

@@ -64,14 +64,20 @@ public class DisponibilidadeDAO {
 //    }
 //
     public ArrayList<Disponibilidade> ListarHorariosDisponiveis(int id) throws ParseException {
-        String sqlListarHorarios = "SELECT iddentista, datadisponivel, hora FROM tbl_disponibilidade WHERE ST='TRUE' and iddentista=?;";
+        String sqlListarHorarios;
+        if (id != 0) {
+            sqlListarHorarios = "SELECT iddentista, datadisponivel, hora FROM tbl_disponibilidade WHERE ST='TRUE' and iddentista=?;";
+        } else {
+            sqlListarHorarios = "SELECT iddentista, datadisponivel, hora FROM tbl_disponibilidade WHERE ST='TRUE';";
+        }
         ArrayList<Disponibilidade> diasindisponiveis = new ArrayList<>();
         try {
             connection = FabricaConexao.conexao();
             PreparedStatement ps = connection.prepareStatement(sqlListarHorarios);
-            ps.setInt(1, id);
+            if (id != 0) {
+                ps.setInt(1, id);
+            }
             ResultSet rs = ps.executeQuery();//Objeto para leitura das linhas retornadas pelo Select
-
             while (rs.next()) {//Move para a próxima linha com dados e valida se há próxima linha
                 DiasDaSemanasEnum diasDaSemanasEnum = null;
                 switch (rs.getString("datadisponivel")) {
@@ -218,7 +224,6 @@ public class DisponibilidadeDAO {
             }
         } catch (SQLException exception) {
             System.out.println(exception.getMessage());
-            exception.printStackTrace();
         } finally {
             try {
                 connection.close();

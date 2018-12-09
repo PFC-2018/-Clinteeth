@@ -9,14 +9,19 @@ import clinteeth.dao.PacienteDAO;
 import clinteeth.dao.PessoaDAO;
 import clinteeth.model.Agendamento;
 import clinteeth.model.Dentista;
+import clinteeth.model.DentistaIndisponivelException;
 import clinteeth.model.Disponibilidade;
 import clinteeth.model.Paciente;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -117,6 +122,7 @@ public class AgendaController extends HttpServlet {
 
     private void cadastrarAgendamento(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException, ClassNotFoundException {
         try {
+            checkDisponibilidade(Integer.parseInt(request.getParameter("dentista")), request.getParameter("dtagendamento"), request.getParameter("hora"));
             Dentista dentista = new Dentista();
             dentista.setDentistaID(Integer.parseInt(request.getParameter("dentista")));
 
@@ -152,8 +158,70 @@ public class AgendaController extends HttpServlet {
                     request.getRequestDispatcher("/cadastrarAgendamento.jsp").forward(request, response);
                 }
             }
-        } catch (ParseException ex) {
+        }catch (DentistaIndisponivelException dentistaIndisponivelException) {
+            String msgErro = dentistaIndisponivelException.getMsgErro();
+            request.setAttribute("msgErro", msgErro);
+            request.setAttribute("dentista", dentistaDAO.ListarTodosDentistas());
+            request.setAttribute("paciente", pacienteDAO.ListarTodosPacientes());
+            request.getRequestDispatcher("/cadastrarAgendamento.jsp").forward(request, response);            
+        }
+        catch (ParseException ex) {
             Logger.getLogger(PacienteController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    private void checkDisponibilidade(int idDentista, String dataConsulta, String horarioConsulta) throws ParseException {
+        Dentista dentista = dentistaDAO.listarPorId(idDentista);
+        LocalDate dtConsulta = LocalDate.parse(dataConsulta, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        LocalTime hrConsulta = LocalTime.parse(horarioConsulta, DateTimeFormatter.ofPattern("HH:mm"));
+        java.util.List<Disponibilidade> disponibilidadeDentista = indisponibilidadeDAO.ListarHorariosDisponiveis(dentista.getDentistaID());
+        java.util.List<String> diasDisponiveis = disponibilidadeDentista
+                .stream()
+                .map(dd -> dd.getDtdisponivel().getDiasSemanas())
+                .distinct()
+                .collect(Collectors.toList());
+        java.util.List horariosDisponiveis = disponibilidadeDentista
+                .stream()
+                .map(dd -> dd.getHora().getHoras())
+                .distinct()
+                .collect(Collectors.toList());
+        boolean atendeNoDia = true;
+        switch (dtConsulta.getDayOfWeek()) {
+            case SUNDAY: {
+                atendeNoDia = diasDisponiveis.contains("DOMINGO");
+                break;
+            }            
+            case MONDAY: {
+                atendeNoDia = diasDisponiveis.contains("SEGUNDA-FEIRA");
+                break;
+            }
+            case TUESDAY: {
+                atendeNoDia = diasDisponiveis.contains("TERÇA-FEIRA");
+                break;
+            }
+            case WEDNESDAY: {
+                atendeNoDia = diasDisponiveis.contains("QUARTA-FEIRA");
+                break;
+            }            
+            case THURSDAY: {
+                atendeNoDia = diasDisponiveis.contains("QUINTA-FEIRA");
+                break;
+            }             
+            case FRIDAY: {
+                atendeNoDia = diasDisponiveis.contains("SEXTA-FEIRA");
+                break;
+            }     
+            case SATURDAY: {
+                atendeNoDia = diasDisponiveis.contains("SÁBADO");
+                break;
+            }
+        }
+        boolean atendeHora = horariosDisponiveis.contains(hrConsulta.format(DateTimeFormatter.ofPattern("HH:mm")));
+        if (!atendeNoDia) {
+            throw new DentistaIndisponivelException("DIA");
+        }
+        if (!atendeHora) {
+            throw new DentistaIndisponivelException("HORARIO");
         }
     }
 
@@ -222,7 +290,13 @@ public class AgendaController extends HttpServlet {
     }
 
     private void ListarAgendamentoPorDentista(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        int id = Integer.parseInt(request.getParameter("dentista"));
+        String idDentistaSelecionado = request.getParameter("dentista");
+        int id;
+        if (idDentistaSelecionado == null) {
+            id = 0;
+        } else {
+            id = Integer.parseInt(idDentistaSelecionado);
+        }
         request.setAttribute("agenda", agendaDAO.ListarTodosAgendamentos(id));
         request.setAttribute("dentista", dentistaDAO.ListarTodosDentistas());
         request.getRequestDispatcher("/Agendamento.jsp").forward(request, response);

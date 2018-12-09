@@ -34,5 +34,12 @@ public class DisponibilidadeDentista {
     public void setHorariosDisponiveis(List<String> horariosDisponiveis) {
         this.horariosDisponiveis = horariosDisponiveis;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof DisponibilidadeDentista)) return false;
+        DisponibilidadeDentista disponibilidadeDentista = (DisponibilidadeDentista)obj;
+        return disponibilidadeDentista.getDentista().getDentistaID() == this.getDentista().getDentistaID();
+    }
     
 }

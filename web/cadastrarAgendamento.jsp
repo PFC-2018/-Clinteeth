@@ -41,6 +41,14 @@
                                                             <option value="${d.dentistaID.toString()}"> ${d.pessoa.nome} </option>
                                                         </c:forEach>
                                                     </select>                                                     
+                                                    <%
+                                                        String msgErro = (String) request.getAttribute("msgErro");
+                                                        if (msgErro != null) {
+                                                    %>
+                                                    <div class="alert alert-danger" id="falhaLogin">
+                                                        <font color="red"><j1><%=msgErro%></j1></font>
+                                                    </div>                                                
+                                                    <%}%>                                                    
                                                 </div>
                                             </div>
                                             <div class="form-group">
@@ -70,6 +78,7 @@
                                                     <font color="red"><j1><%=dataIndisponivel%></j1></font>
                                                 </div>
                                                 <%}%>
+
                                             </div>
                                             <div class="form-group">
                                                 <div class="col-md-5">

@@ -21,7 +21,7 @@
                 <div class="collapse" id="submenu2" aria-expanded="false">
                     <ul class="flex-column pl-1 nav">
                         <li class="nav-item">
-                            <a class="nav-link" href="<%=request.getContextPath()%>/Agenda?btnAcionar=listarDentistasCombobox" title="Agendamentos"><j1>Agendamento</j1></a>
+                            <a class="nav-link" href="<%=request.getContextPath()%>/Agenda?btnAcionar=ListarTudo" title="Agendamentos"><j1>Agendamento</j1></a>
                             <!--<a class="nav-link" href="<%=request.getContextPath()%>/Disponibilidade?btnAcionar=listarDentistasCombobox" title="Datas Disponiveis"><j1>Disponibilidade</j1></a>-->
                         </li>                        
                     </ul>
